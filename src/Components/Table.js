@@ -92,7 +92,6 @@ class CustomizedTable extends Component {
     const limit = 10
 
     if (selectedData === null){
-      // console.log(this.state.offset)
       return (
         <Paper className={classes.root}>
           <Table className={classes.table}>

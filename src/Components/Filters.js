@@ -47,57 +47,15 @@ class Filters extends Component {
   }
 
   handleChange = name => event => {
-    console.log(name)
-    this.setState({ [name]: event.target.checked })
-   
-    // reset offset when filtering
-    this.props.callFromParent(0)
-    // find the intersection when filtering
-    // let selectedData = this.props.rows.filter((row) => this.state.isVerified ? row.IsVerified : true )
-    //                      .filter((row) => this.state.isSensitive ? row.IsSensitive : true)
-    //                      .filter((row) => this.state.isSpam ? row.IsSpamList : true)
-    // this.setState({displayedData: selectedData})
-    const names = ['isVerified', 'isSensitive', 'isSpam']
-    const otherNames =  names.filter((item) => item !== name)
-    if (event.target.checked === true){
-      let selectedData = this.props.rows.filter((item) => item[name] === true)
-      let dataList = []
-      otherNames.forEach((item) => {
-        if (this.state[item] === true){
-           let itemData = this.props.rows.filter((el) => el[item] === true)
-           let intersection = selectedData.filter(x => itemData.includes(x))
-           dataList.push(intersection)
-        }
-      })
-      if (dataList.length === 0) {
-        this.setState({displayedData: selectedData})
-      }
-      if (dataList.length === 1) {
-        this.setState({displayedData: dataList[0]})
-      }
-      if (dataList.length === 2) {
-        let intersectData = dataList[0].filter(x => dataList[1].includes(x))
-        this.setState({displayedData: intersectData})
-      }
-    } else {
-      let dataListNew = []
-      otherNames.forEach((item) => {
-        if (this.state[item] === true){
-          let itemData = this.props.rows.filter((el) => el[item] === true)
-          dataListNew.push(itemData)
-        }
-      })
-      if (dataListNew.length === 0){
-        this.setState({displayedData: this.props.rows})
-      }
-      if (dataListNew.length === 1){
-        this.setState({displayedData: dataListNew[0]})
-      }
-      if (dataListNew.length === 2){
-        let intersectData = dataListNew[0].filter(x => dataListNew[1].includes(x))
-        this.setState({displayedData: intersectData})
-      }
-    }
+    this.setState({ [name]: event.target.checked }, () => {
+      // reset offset when filtering
+      this.props.callFromParent(0)
+      // find the intersection when filtering
+      let selectedData = this.props.rows.filter((row) => this.state.isVerified ? row.isVerified : true )
+                         .filter((row) => this.state.isSensitive ? row.isSensitive : true)
+                         .filter((row) => this.state.isSpam ? row.isSpam : true)
+      this.setState({displayedData: selectedData})
+    })
   }
 
   render() {
