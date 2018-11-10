@@ -17,6 +17,7 @@ export default class Datadisplay extends Component {
     loading: true,
     rows: [],
     listDataFromChild: null,
+    offsetData: null,
     columnToSort: '',
     sortDirection: 'desc'
   }
@@ -53,6 +54,12 @@ export default class Datadisplay extends Component {
   getDataFromChild = (dataFromChild) => {
     this.setState({
       listDataFromChild: dataFromChild
+    })
+  }
+
+  getOffsetFromChild = (offsetDataFromChild) => {
+    this.setState({
+      offsetData: offsetDataFromChild
     })
   }
  
@@ -94,6 +101,7 @@ export default class Datadisplay extends Component {
   render() {
     // console.log(this.state.columnToSort, this.state.sortDirection)
     // console.log(this.state.listDataFromChild)
+    // console.log(this.state.offsetData)
     if (this.state.error) {
       return(
         <p>{this.state.error}</p>
@@ -118,6 +126,8 @@ export default class Datadisplay extends Component {
         <Filters 
           rows = {this.state.rows} 
           callbackFromParent = {this.getDataFromChild}
+          offsetData = {this.state.offsetData}
+          callFromParent = {this.getOffsetFromChild}
         />
         <Table 
           rows = {this.state.rows} 
@@ -125,6 +135,8 @@ export default class Datadisplay extends Component {
           handleSort={this.sortData}
           sortDirection = {this.state.sortDirection}
           columnToSort = {this.state.columnToSort}
+          callFromParent = {this.getOffsetFromChild}
+          offsetData = {this.state.offsetData}
         />
       </div>
     )

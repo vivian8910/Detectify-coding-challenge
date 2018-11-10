@@ -47,7 +47,16 @@ class Filters extends Component {
   }
 
   handleChange = name => event => {
+    console.log(name)
     this.setState({ [name]: event.target.checked })
+   
+    // reset offset when filtering
+    this.props.callFromParent(0)
+    // find the intersection when filtering
+    // let selectedData = this.props.rows.filter((row) => this.state.isVerified ? row.IsVerified : true )
+    //                      .filter((row) => this.state.isSensitive ? row.IsSensitive : true)
+    //                      .filter((row) => this.state.isSpam ? row.IsSpamList : true)
+    // this.setState({displayedData: selectedData})
     const names = ['isVerified', 'isSensitive', 'isSpam']
     const otherNames =  names.filter((item) => item !== name)
     if (event.target.checked === true){

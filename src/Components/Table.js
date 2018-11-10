@@ -75,14 +75,24 @@ class CustomizedTable extends Component {
     offset: 0
   }
 
-  handleClick = (offset) => {
-    this.setState({offset: offset})
+  componentDidUpdate(prevProp, prevState){
+    if(prevState.offset !== this.state.offset){
+      this.props.callFromParent(this.state.offset)
+    }
   }
 
-  render() {
+  handleClick = (offset) => {
+    this.setState({offset: offset})
+    
+  }
   
+  render() {
+    // console.log(this.state.offset + '---state---')
     const { rows, classes, selectedData, handleSort, sortDirection, columnToSort } = this.props
+    const limit = 10
+
     if (selectedData === null){
+      // console.log(this.state.offset)
       return (
         <Paper className={classes.root}>
           <Table className={classes.table}>
@@ -106,7 +116,7 @@ class CustomizedTable extends Component {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map(row => {
+              {rows.slice(this.state.offset, this.state.offset + limit).map(row => {
                 return (
                   <TableRow className={classes.row} key={row.id}>
                     <CustomTableCell component="th" scope="row">
@@ -124,12 +134,12 @@ class CustomizedTable extends Component {
           <MuiThemeProvider theme={themeNew}>
             <CssBaseline />
             <Pagination
-              limit={10}
+              limit={limit}
               offset={this.state.offset}
               total={rows.length}
               onClick={(e, offset) => this.handleClick(offset)}
             />
-        </MuiThemeProvider>
+          </MuiThemeProvider>
         </Paper>
         
       )
@@ -157,7 +167,7 @@ class CustomizedTable extends Component {
             </TableRow>
           </TableHead>
           <TableBody>
-            {selectedData.map(row => {
+            {selectedData.slice(this.props.offsetData, this.props.offsetData + limit).map(row => {
               return (
                 <TableRow className={classes.row} key={row.id}>
                   <CustomTableCell component="th" scope="row">
@@ -172,6 +182,16 @@ class CustomizedTable extends Component {
             })}
           </TableBody>
         </Table>
+        <MuiThemeProvider theme={themeNew}>
+            <CssBaseline />
+            <Pagination
+              limit={limit}
+              // offset={this.state.offset}
+              offset = {this.props.offsetData}
+              total={selectedData.length}
+              onClick={(e, offset) => this.handleClick(offset)}
+            />
+        </MuiThemeProvider>
       </Paper>
     )
   }
