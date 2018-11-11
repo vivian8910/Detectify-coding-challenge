@@ -33,76 +33,51 @@ class Filters extends Component {
     classes: PropTypes.object.isRequired
   }
 
-  state = {
-    isVerified: false,
-    isSensitive: false,
-    isSpam: false,
-    displayedData : []
-  }
-  
-  componentDidUpdate(prevProps, prevState){
-    if(prevState.displayedData !== this.state.displayedData){
-      this.props.callbackFromParent(this.state.displayedData)
-    }
-  }
-
-  handleChange = name => event => {
-    this.setState({ [name]: event.target.checked }, () => {
-      // reset offset when filtering
-      this.props.callFromParent(0)
-      // find the intersection when filtering
-      let selectedData = this.props.rows.filter((row) => this.state.isVerified ? row.isVerified : true )
-                         .filter((row) => this.state.isSensitive ? row.isSensitive : true)
-                         .filter((row) => this.state.isSpam ? row.isSpam : true)
-      this.setState({displayedData: selectedData})
-    })
-  }
-
   render() {
-    const { classes} = this.props;
+    const { classes, isVerified, isSensitive, isSpam, handleChange} = this.props;
     return (
       <div>     
         <FormControlLabel
-          control={
+          control = {
             <Checkbox
-              checked={this.state.isVerified}
-              onChange={this.handleChange('isVerified')}
-              value="isVerified"
-              classes={{
+              checked = {isVerified}
+              onChange = {handleChange('isVerified')}
+              value = "isVerified"
+              classes = {{
                 root: classes.root,
                 checked: classes.checked,
               }}
             />
           }
-          label="Verified"
+          label = "Verified"
         />
         <FormControlLabel
-          control={
+          control = {
             <Checkbox
-              checked={this.state.isSensitive}
-              onChange={this.handleChange('isSensitive')}
-              value="isSensitive"
-              classes={{
+              checked = {isSensitive}
+              onChange = {handleChange('isSensitive')}
+              value = "isSensitive"
+              classes = {{
                 root: classes.root,
                 checked: classes.checked,
               }}
             />
           }
-          label="Sensitive"
+          label = "Sensitive"
         />
         <FormControlLabel
-          control={
+          control = {
             <Checkbox
-              checked={this.state.isSpam}
-              onChange={this.handleChange('isSpam')}
-              value="isSpam"
-              classes={{
+              checked = {isSpam}
+              onChange = {handleChange('isSpam')}
+              value = "isSpam"
+              classes = {{
                 root: classes.root,
                 checked: classes.checked,
               }}
             />
           }
-          label="Spam"
+          label = "Spam"
         />
       </div>
     )

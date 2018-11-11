@@ -71,38 +71,21 @@ class CustomizedTable extends Component {
     classes: PropTypes.object.isRequired
   }
 
-  state = {
-    offset: 0
-  }
-
-  componentDidUpdate(prevProp, prevState){
-    if(prevState.offset !== this.state.offset){
-      this.props.callFromParent(this.state.offset)
-    }
-  }
-
-  handleClick = (offset) => {
-    this.setState({offset: offset})
-  }
-  
   render() {
-    const { rows, classes, selectedData, handleSort, sortDirection, columnToSort } = this.props
+    const { classes, handleSort, sortDirection, columnToSort, offsetData, handleClick, displayedData } = this.props
     const limit = 10
-    //render conditionally based on whether any filter is selected
-    let displayList = selectedData === null ? rows : selectedData
-    let offsetPoint = selectedData === null ? this.state.offset : this.props.offsetData
     return (
       <Paper className={classes.root}>
         <Table className={classes.table}>
           <TableHead>
             <TableRow>
-              <CustomTableCell onClick = {() => handleSort('branch',displayList, 'name')}>
+              <CustomTableCell onClick = {() => handleSort('branch', displayedData, 'name')}>
                 <div className = 'container'>
                   <span>Branch Name</span>
                   <div>{columnToSort === 'branch' ? (sortDirection === 'asc' ? <ExpandLess /> : <ExpandMore />) : null}</div>
                 </div>
               </CustomTableCell>
-              <CustomTableCell onClick = {() => handleSort('pwncount',displayList, 'count')}>
+              <CustomTableCell onClick = {() => handleSort('pwncount',  displayedData, 'count')}>
                 <div className = 'container'>
                   <span>PwnCount</span>
                   <div>{columnToSort === 'pwncount' ? (sortDirection === 'asc' ? <ExpandLess/> : <ExpandMore  />) : null}</div>
@@ -114,9 +97,9 @@ class CustomizedTable extends Component {
             </TableRow>
           </TableHead>
           <TableBody>
-            {displayList.slice(offsetPoint, offsetPoint + limit).map(row => {
+            {displayedData.slice(offsetData, offsetData + limit).map(row => {
               return (
-                <TableRow className={classes.row} key={row.id}>
+                <TableRow className = {classes.row} key = {row.id}>
                   <CustomTableCell component="th" scope="row">
                     {row.name}
                   </CustomTableCell>
@@ -125,17 +108,17 @@ class CustomizedTable extends Component {
                   <CustomTableCell>{row.isSensitive ? <Done /> : <Clear />}</CustomTableCell>
                   <CustomTableCell>{row.isSpam ? <Done /> : <Clear />}</CustomTableCell>
                 </TableRow>
-              );
+              )
             })}
           </TableBody>
         </Table>
         <MuiThemeProvider theme={themeNew}>
           <CssBaseline />
           <Pagination
-            limit={limit}
-            offset = {offsetPoint}
-            total={displayList.length}
-            onClick={(e, offset) => this.handleClick(offset)}
+            limit = {limit}
+            offset = {offsetData}
+            total={displayedData.length}
+            onClick={(e, offset) => handleClick(offset)}
           />
         </MuiThemeProvider>
       </Paper>

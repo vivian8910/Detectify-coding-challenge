@@ -16,15 +16,17 @@ export default class Datadisplay extends Component {
     error: null,
     loading: true,
     rows: [],
-    listDataFromChild: null,
+    displayedData : [],
     offsetData: null,
     columnToSort: '',
-    sortDirection: 'desc'
+    sortDirection: 'desc',
+    isVerified: false,
+    isSensitive: false,
+    isSpam: false
   }
 
   async componentDidMount() {
     const breachData = await getBreachData()
-    // console.log(breachData)
 
     if (breachData === null) {
       this.setState({
@@ -47,22 +49,22 @@ export default class Datadisplay extends Component {
     })
    
     this.setState({
-      rows: rows
+      rows: rows,
+      displayedData: rows
     })
   }
 
-  getDataFromChild = (dataFromChild) => {
-    this.setState({
-      listDataFromChild: dataFromChild
+  handleChange = name => event => {
+    this.setState({ [name]: event.target.checked }, () => {
+      // reset offset when filtering
+      this.setState({offsetData: null})
+      // find the intersection when filtering
+      let selectedData = this.state.rows.filter((row) => this.state.isVerified ? row.isVerified : true )
+                         .filter((row) => this.state.isSensitive ? row.isSensitive : true)
+                         .filter((row) => this.state.isSpam ? row.isSpam : true)
+      this.setState({displayedData: selectedData})
     })
   }
-
-  getOffsetFromChild = (offsetDataFromChild) => {
-    this.setState({
-      offsetData: offsetDataFromChild
-    })
-  }
- 
 
   sortData = (columnName, data, dataType) => {
     this.setState({
@@ -94,14 +96,13 @@ export default class Datadisplay extends Component {
         })
       }
     }
-    
   }
 
+  handleClick = (offset) => {
+    this.setState({offsetData: offset})
+  }
 
   render() {
-    // console.log(this.state.columnToSort, this.state.sortDirection)
-    // console.log(this.state.listDataFromChild)
-    // console.log(this.state.offsetData)
     if (this.state.error) {
       return(
         <p>{this.state.error}</p>
@@ -110,33 +111,30 @@ export default class Datadisplay extends Component {
 
     if (this.state.loading === true) {
       return(
-        <div>
           <Loader 
               type="ThreeDots"
               color="#ffb300"
               height="100"	
               width="100"
-            />  
-        </div>
+          />  
       )
     }
     
     return (
       <div>
         <Filters 
-          rows = {this.state.rows} 
-          callbackFromParent = {this.getDataFromChild}
-          offsetData = {this.state.offsetData}
-          callFromParent = {this.getOffsetFromChild}
+          handleChange = {this.handleChange}
+          isVerified = {this.state.isVerified}
+          isSensitive = {this.state.isSensitive}
+          isSpam = {this.state.isSpam}
         />
         <Table 
-          rows = {this.state.rows} 
-          selectedData = {this.state.listDataFromChild} 
+          displayedData = {this.state.displayedData} 
           handleSort={this.sortData}
           sortDirection = {this.state.sortDirection}
           columnToSort = {this.state.columnToSort}
-          callFromParent = {this.getOffsetFromChild}
           offsetData = {this.state.offsetData}
+          handleClick = {this.handleClick}
         />
       </div>
     )
